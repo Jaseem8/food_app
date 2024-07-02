@@ -8,7 +8,6 @@ router.get("/", async (req: Request, res: Response) => {
   try {
     const cities = await Restaurant.distinct("city"); // Fetch distinct city names from the Restaurant collection
     res.json(cities);
-    console.log(cities);
   } catch (err: any) {
     res.status(500).json({ message: err.message });
   }
