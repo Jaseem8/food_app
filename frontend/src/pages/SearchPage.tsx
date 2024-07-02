@@ -9,7 +9,7 @@ import { useState } from "react";
 import { useParams } from "react-router-dom";
 
 export type SearchState = {
-  searchQuery: string | null | undefined;
+  searchQuery: any;
   page: number;
   selectedCuisines: string[];
   sortOption: string;
