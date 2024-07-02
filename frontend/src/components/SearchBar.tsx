@@ -64,7 +64,7 @@ const SearchBar = ({ onSubmit, onReset, placeHolder, searchQuery }: Props) => {
     fetchCities();
   }, []);
 
-  const handleInputChange = (e) => {
+  const handleInputChange = (e: any) => {
     const userInput = e.target.value;
     form.setValue("searchQuery", userInput);
 
@@ -76,7 +76,7 @@ const SearchBar = ({ onSubmit, onReset, placeHolder, searchQuery }: Props) => {
     setShowSuggestions(true);
   };
 
-  const handleSuggestionClick = (suggestion) => {
+  const handleSuggestionClick = (suggestion: any) => {
     form.setValue("searchQuery", suggestion);
     setFilteredSuggestions([]);
     setShowSuggestions(false);
