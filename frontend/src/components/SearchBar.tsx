@@ -22,8 +22,8 @@ type Props = {
 };
 
 const SearchBar = ({ onSubmit, onReset, placeHolder, searchQuery }: Props) => {
-  const [suggestions, setSuggestions] = useState([]);
-  const [filteredSuggestions, setFilteredSuggestions] = useState([]);
+  const [suggestions, setSuggestions] = useState<string[]>([]);
+  const [filteredSuggestions, setFilteredSuggestions] = useState<string[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
 
   const form = useForm<SearchForm>({
@@ -64,7 +64,7 @@ const SearchBar = ({ onSubmit, onReset, placeHolder, searchQuery }: Props) => {
     fetchCities();
   }, []);
 
-  const handleInputChange = (e: any) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const userInput = e.target.value;
     form.setValue("searchQuery", userInput);
 
@@ -76,7 +76,7 @@ const SearchBar = ({ onSubmit, onReset, placeHolder, searchQuery }: Props) => {
     setShowSuggestions(true);
   };
 
-  const handleSuggestionClick = (suggestion: any) => {
+  const handleSuggestionClick = (suggestion: string) => {
     form.setValue("searchQuery", suggestion);
     setFilteredSuggestions([]);
     setShowSuggestions(false);
@@ -107,6 +107,7 @@ const SearchBar = ({ onSubmit, onReset, placeHolder, searchQuery }: Props) => {
                   className="border-none shadow-none text-xl focus-visible:ring-0"
                   placeholder={placeHolder}
                   onChange={handleInputChange}
+                  value={field.value ?? ""} // Ensure value is a string
                 />
               </FormControl>
               {showSuggestions && filteredSuggestions.length > 0 && (
