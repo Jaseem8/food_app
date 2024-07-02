@@ -8,12 +8,6 @@ import { Button } from "./ui/button";
 import { useEffect, useState } from "react";
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
-// Define your options for the select dropdown
-const selectOptions = [
-  { label: "Option 1", value: "option1" },
-  { label: "Option 2", value: "option2" },
-  { label: "Option 3", value: "option3" },
-];
 const formSchema = z.object({
   searchQuery: z.string().nullable(), // Allow null for initial state
 });
@@ -29,6 +23,8 @@ type Props = {
 
 const SearchBar = ({ onSubmit, onReset, placeHolder, searchQuery }: Props) => {
   const [suggestions, setSuggestions] = useState([]);
+  const [filteredSuggestions, setFilteredSuggestions] = useState([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
 
   const form = useForm<SearchForm>({
     resolver: zodResolver(formSchema),
@@ -50,6 +46,7 @@ const SearchBar = ({ onSubmit, onReset, placeHolder, searchQuery }: Props) => {
       onReset();
     }
   };
+
   useEffect(() => {
     const fetchCities = async () => {
       try {
@@ -66,6 +63,25 @@ const SearchBar = ({ onSubmit, onReset, placeHolder, searchQuery }: Props) => {
 
     fetchCities();
   }, []);
+
+  const handleInputChange = (e) => {
+    const userInput = e.target.value;
+    form.setValue("searchQuery", userInput);
+
+    const filtered = suggestions.filter((suggestion) =>
+      suggestion.toLowerCase().includes(userInput.toLowerCase())
+    );
+
+    setFilteredSuggestions(filtered);
+    setShowSuggestions(true);
+  };
+
+  const handleSuggestionClick = (suggestion) => {
+    form.setValue("searchQuery", suggestion);
+    setFilteredSuggestions([]);
+    setShowSuggestions(false);
+  };
+
   return (
     <Form {...form}>
       <form
@@ -84,21 +100,28 @@ const SearchBar = ({ onSubmit, onReset, placeHolder, searchQuery }: Props) => {
           control={form.control}
           name="searchQuery"
           render={({ field }) => (
-            <FormItem className="flex-1">
+            <FormItem className="flex-1 relative">
               <FormControl>
-                <select
+                <Input
                   {...field}
                   className="border-none shadow-none text-xl focus-visible:ring-0"
-                  onChange={(e) => form.setValue("searchQuery", e.target.value)}
-                >
-                  <option value="">Select your City</option>
-                  {suggestions.map((option) => (
-                    <option key={option} value={option}>
-                      {option}
-                    </option>
-                  ))}
-                </select>
+                  placeholder={placeHolder}
+                  onChange={handleInputChange}
+                />
               </FormControl>
+              {showSuggestions && filteredSuggestions.length > 0 && (
+                <ul className="absolute left-0 right-0 mt-2 bg-white border border-gray-300 rounded-lg shadow-lg z-10">
+                  {filteredSuggestions.map((suggestion, index) => (
+                    <li
+                      key={index}
+                      className="px-4 py-2 cursor-pointer hover:bg-gray-200"
+                      onClick={() => handleSuggestionClick(suggestion)}
+                    >
+                      {suggestion}
+                    </li>
+                  ))}
+                </ul>
+              )}
             </FormItem>
           )}
         />
